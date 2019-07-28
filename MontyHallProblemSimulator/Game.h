@@ -1,5 +1,6 @@
 #pragma once
-#include <SFML/Graphics.hpp>
+#include <TGUI/TGUI.hpp>
+#include <iostream>
 #include "Global.h"
 
 class Game
@@ -11,4 +12,6 @@ public:
 	void Run();
 private:
 	sf::RenderWindow mWindow;
+	sf::Texture mClosedDoorTexture;
+	sf::Sprite mClosedDoor;
 };
