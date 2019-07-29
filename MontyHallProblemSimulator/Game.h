@@ -13,5 +13,5 @@ public:
 private:
 	sf::RenderWindow mWindow;
 	sf::Texture mClosedDoorTexture;
-	sf::Sprite mClosedDoor;
+	sf::Texture mGoatDoorTexture;
 };

@@ -23,8 +23,12 @@ bool Game::Init()
 		return false;
 	}
 
-	mClosedDoor.setTexture(mClosedDoorTexture);
-	mClosedDoor.setPosition(100.f, 100.f);
+	if (!mGoatDoorTexture.loadFromFile("C:\\Users\\Jongmin\\Documents\\MontyHallProblemSimulator\\MontyHallProblemSimulator\\goatDoor.png"))
+	{
+		std::cout << "Cannot load image\n";
+		return false;
+	}
+
 	return true;
 }
 
@@ -32,10 +36,9 @@ void Game::Run()
 {
 	tgui::Gui gui{ mWindow };  // Create the gui and attach it to the window
 	
-	tgui::Texture closedDoorTexture("C:\\Users\\Jongmin\\Documents\\MontyHallProblemSimulator\\MontyHallProblemSimulator\\closedDoor.png");
-	tgui::Picture::Ptr door1 = tgui::Picture::create(closedDoorTexture);
-	tgui::Picture::Ptr door2 = tgui::Picture::create(closedDoorTexture);
-	tgui::Picture::Ptr door3 = tgui::Picture::create(closedDoorTexture);
+	tgui::Picture::Ptr door1 = tgui::Picture::create(mClosedDoorTexture);
+	tgui::Picture::Ptr door2 = tgui::Picture::create(mClosedDoorTexture);
+	tgui::Picture::Ptr door3 = tgui::Picture::create(mClosedDoorTexture);
 
 	door1->setPosition(150, 160);
 	door2->setPosition(500,160);
@@ -45,7 +48,11 @@ void Game::Run()
 	gui.add(door2);
 	gui.add(door3);
 
-	door1->connect("Clicked", signalHandler);
+	door1->connect("Clicked", [&door1, this]()
+		{
+			std::cout << "clicked\n";
+			door1->getRenderer()->setTexture(mGoatDoorTexture);
+		});
 
 	tgui::Label::Ptr label1 = tgui::Label::create();
 	label1->setText("Run simulation");
