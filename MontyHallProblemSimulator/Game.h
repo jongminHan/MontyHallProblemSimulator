@@ -13,6 +13,7 @@ private:
 	sf::RenderWindow mWindow;
 	sf::Texture mClosedDoorTexture;
 	sf::Texture mGoatDoorTexture;
+	sf::Texture mCarDoorTexture;
 	std::shared_ptr<Door> mDoor1;
 	std::shared_ptr<Door> mDoor2;
 	std::shared_ptr<Door> mDoor3;

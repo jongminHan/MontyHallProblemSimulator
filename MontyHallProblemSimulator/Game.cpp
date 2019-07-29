@@ -26,6 +26,12 @@ bool Game::Init()
 		return false;
 	}
 
+	if (!mCarDoorTexture.loadFromFile("C:\\Users\\Jongmin\\Documents\\MontyHallProblemSimulator\\MontyHallProblemSimulator\\carDoor.png"))
+	{
+		std::cout << "Cannot load image\n";
+		return false;
+	}
+
 	mDoor1 = std::make_shared<Door>(mClosedDoorTexture);
 	mDoor2 = std::make_shared<Door>(mClosedDoorTexture);
 	mDoor3 = std::make_shared<Door>(mClosedDoorTexture);
@@ -65,29 +71,62 @@ void Game::Run()
 		{
 			std::cout << "Door 1 is clicked\n";
 			mClickNumber++;
-			if (mDoor1->IsCar())
+
+			if (mClickNumber < 2)
 			{
-				switch (rand() % 2)
+				if (mDoor1->IsCar())
 				{
-				case 0:
-					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor2->setEnabled(false);
-					break;
-				case 1:
+					switch (rand() % 2)
+					{
+					case 0:
+						mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+						mDoor2->setEnabled(false);
+						break;
+					case 1:
+						mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+						mDoor3->setEnabled(false);
+						break;
+					}
+				}
+				else if (mDoor2->IsCar())
+				{
 					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
 					mDoor3->setEnabled(false);
-					break;
+				}
+				else if (mDoor3->IsCar())
+				{
+					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor2->setEnabled(false);
 				}
 			}
-			else if (mDoor2->IsCar())
+			else // if mClickNumber = 2
 			{
-				mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-				mDoor3->setEnabled(false);
-			}
-			else if (mDoor3->IsCar())
-			{
-				mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-				mDoor2->setEnabled(false);
+				if (mDoor1->IsCar())
+				{
+					mDoor1->getRenderer()->setTexture(mCarDoorTexture);
+				}
+				else
+				{
+					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+				}
+
+				if (mDoor2->IsCar())
+				{
+					mDoor2->getRenderer()->setTexture(mCarDoorTexture);
+				}
+				else
+				{
+					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+				}
+
+				if (mDoor3->IsCar())
+				{
+					mDoor3->getRenderer()->setTexture(mCarDoorTexture);
+				}
+				else
+				{
+					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+				}
 			}
 		});
 
@@ -95,29 +134,62 @@ void Game::Run()
 		{
 			std::cout << "Door 2 is clicked\n";
 			mClickNumber++;
-			if (mDoor2->IsCar())
+
+			if (mClickNumber < 2)
 			{
-				switch (rand() % 2)
+				if (mDoor2->IsCar())
 				{
-				case 0:
-					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor1->setEnabled(false);
-					break;
-				case 1:
+					switch (rand() % 2)
+					{
+					case 0:
+						mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+						mDoor1->setEnabled(false);
+						break;
+					case 1:
+						mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+						mDoor3->setEnabled(false);
+						break;
+					}
+				}
+				else if (mDoor1->IsCar())
+				{
 					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
 					mDoor3->setEnabled(false);
-					break;
+				}
+				else if (mDoor3->IsCar())
+				{
+					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor1->setEnabled(false);
 				}
 			}
-			else if (mDoor1->IsCar())
+			else // if mClickNumber = 2
 			{
-				mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-				mDoor3->setEnabled(false);
-			}
-			else if (mDoor3->IsCar())
-			{
-				mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-				mDoor1->setEnabled(false);
+				if (mDoor1->IsCar())
+				{
+					mDoor1->getRenderer()->setTexture(mCarDoorTexture);
+				}
+				else
+				{
+					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+				}
+
+				if (mDoor2->IsCar())
+				{
+					mDoor2->getRenderer()->setTexture(mCarDoorTexture);
+				}
+				else
+				{
+					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+				}
+
+				if (mDoor3->IsCar())
+				{
+					mDoor3->getRenderer()->setTexture(mCarDoorTexture);
+				}
+				else
+				{
+					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+				}
 			}
 		});
 
@@ -125,29 +197,62 @@ void Game::Run()
 		{
 			std::cout << "Door 3 is clicked\n";
 			mClickNumber++;
-			if (mDoor3->IsCar())
+
+			if (mClickNumber < 2)
 			{
-				switch (rand() % 2)
+				if (mDoor3->IsCar())
 				{
-				case 0:
-					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor1->setEnabled(false);
-					break;
-				case 1:
+					switch (rand() % 2)
+					{
+					case 0:
+						mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+						mDoor1->setEnabled(false);
+						break;
+					case 1:
+						mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+						mDoor2->setEnabled(false);
+						break;
+					}
+				}
+				else if (mDoor1->IsCar())
+				{
 					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
 					mDoor2->setEnabled(false);
-					break;
+				}
+				else if (mDoor2->IsCar())
+				{
+					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor1->setEnabled(false);
 				}
 			}
-			else if (mDoor1->IsCar())
+			else // if mClickNumber = 2
 			{
-				mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-				mDoor2->setEnabled(false);
-			}
-			else if (mDoor2->IsCar())
-			{
-				mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-				mDoor1->setEnabled(false);
+				if (mDoor1->IsCar())
+				{
+					mDoor1->getRenderer()->setTexture(mCarDoorTexture);
+				}
+				else
+				{
+					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+				}
+
+				if (mDoor2->IsCar())
+				{
+					mDoor2->getRenderer()->setTexture(mCarDoorTexture);
+				}
+				else
+				{
+					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+				}
+
+				if (mDoor3->IsCar())
+				{
+					mDoor3->getRenderer()->setTexture(mCarDoorTexture);
+				}
+				else
+				{
+					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+				}
 			}
 		});
 
