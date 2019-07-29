@@ -1,15 +1,13 @@
 #pragma once
 #include <TGUI/TGUI.hpp>
-#include "eClick.h"
 
 class Door : public tgui::Picture
 {
 public:
 	Door(const sf::Texture& texture);
 	virtual ~Door();
-	void ClickSignal();
-	eClick GetClickState();
-	void SetClickState(eClick state);
+	bool IsCar();
+	void SetCar(bool car);
 private:
-	eClick mClickState;
+	bool mbIsCar; // True for car. False for goat. Default value is false.
 };

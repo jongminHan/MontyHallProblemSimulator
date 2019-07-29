@@ -16,9 +16,7 @@ private:
 	std::shared_ptr<Door> mDoor1;
 	std::shared_ptr<Door> mDoor2;
 	std::shared_ptr<Door> mDoor3;
-
-	int mClick;
-
+	int mClickNumber;
 	const int WIDTH = 1280;
 	const int HEIGHT = 720;
 };

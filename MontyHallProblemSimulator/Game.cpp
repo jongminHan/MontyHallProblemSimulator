@@ -1,12 +1,8 @@
 #include "Game.h"
 #include <unordered_map>
 
-void signalHandler()
-{
-	std::cout << "clicked\n";
-}
-
 Game::Game()
+	: mClickNumber(0)
 {
 }
 
@@ -37,11 +33,6 @@ bool Game::Init()
 	return true;
 }
 
-void SignalHandler()
-{
-
-}
-
 void Game::Run()
 {
 	std::srand(static_cast<unsigned int>(std::time(nullptr)));
@@ -49,18 +40,16 @@ void Game::Run()
 	tgui::Gui gui{ mWindow };  // Create the gui and attach it to the window
 	
 
-	std::unordered_map<std::shared_ptr<Door>, bool> doorMap = { {mDoor1, false}, {mDoor2, false}, {mDoor3, false} };
-
-	switch (rand() % 3) // true means car. false means goat.
+	switch (rand() % 3) // True for car. False for goat.
 	{
 	case 0:
-		doorMap[mDoor1] = true;
+		mDoor1->SetCar(true);
 		break;
 	case 1:
-		doorMap[mDoor2] = true;
+		mDoor2->SetCar(true);
 		break;
 	case 2:
-		doorMap[mDoor3] = true;
+		mDoor3->SetCar(true);
 		break;
 	}
 
@@ -72,83 +61,96 @@ void Game::Run()
 	gui.add(mDoor2);
 	gui.add(mDoor3);
 
-	mDoor1->connect("Clicked", SignalHandler);
-/*
-	mDoor1->connect("Clicked", [&doorMap, &door1, &door2, &door3, this]()
+	mDoor1->connect("Clicked", [this]()
 		{
 			std::cout << "Door 1 is clicked\n";
-			if (doorMap[door1] == true)
+			mClickNumber++;
+			if (mDoor1->IsCar())
 			{
 				switch (rand() % 2)
 				{
 				case 0:
-					door2->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor2->setEnabled(false);
 					break;
 				case 1:
-					door3->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor3->setEnabled(false);
 					break;
 				}
 			}
-			else if (doorMap[door2] == true)
+			else if (mDoor2->IsCar())
 			{
-				door3->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor3->setEnabled(false);
 			}
-			else if (doorMap[door3] == true)
+			else if (mDoor3->IsCar())
 			{
-				door2->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor2->setEnabled(false);
 			}
 		});
 
-	door2->connect("Clicked", [&doorMap, &door1, &door2, &door3, this]()
+	mDoor2->connect("Clicked", [this]()
 		{
 			std::cout << "Door 2 is clicked\n";
-			if (doorMap[door2] == true)
+			mClickNumber++;
+			if (mDoor2->IsCar())
 			{
 				switch (rand() % 2)
 				{
 				case 0:
-					door1->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor1->setEnabled(false);
 					break;
 				case 1:
-					door3->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor3->setEnabled(false);
 					break;
 				}
 			}
-			else if (doorMap[door1] == true)
+			else if (mDoor1->IsCar())
 			{
-				door3->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor3->setEnabled(false);
 			}
-			else if (doorMap[door3] == true)
+			else if (mDoor3->IsCar())
 			{
-				door1->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor1->setEnabled(false);
 			}
 		});
 
-	door3->connect("Clicked", [&doorMap, &door1, &door2, &door3, this]()
+	mDoor3->connect("Clicked", [this]()
 		{
-			std::cout << "Door 2 is clicked\n";
-			if (doorMap[door3] == true)
+			std::cout << "Door 3 is clicked\n";
+			mClickNumber++;
+			if (mDoor3->IsCar())
 			{
 				switch (rand() % 2)
 				{
 				case 0:
-					door1->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor1->setEnabled(false);
 					break;
 				case 1:
-					door2->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor2->setEnabled(false);
 					break;
 				}
 			}
-			else if (doorMap[door1] == true)
+			else if (mDoor1->IsCar())
 			{
-				door2->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor2->setEnabled(false);
 			}
-			else if (doorMap[door2] == true)
+			else if (mDoor2->IsCar())
 			{
-				door1->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor1->setEnabled(false);
 			}
 		});
-*/
+
 	tgui::Label::Ptr label1 = tgui::Label::create();
 	label1->setText("Run simulation");
 	label1->setSize(167.2, 48);
