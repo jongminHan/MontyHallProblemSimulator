@@ -1,4 +1,5 @@
 #include "Game.h"
+#include <unordered_map>
 
 void signalHandler()
 {
@@ -29,31 +30,119 @@ bool Game::Init()
 		return false;
 	}
 
+	mDoor1 = new Door(mClosedDoorTexture);
+	mDoor2 = new Door(mClosedDoorTexture);
+	mDoor3 = new Door(mClosedDoorTexture);
+
 	return true;
 }
 
 void Game::Run()
 {
+	std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
 	tgui::Gui gui{ mWindow };  // Create the gui and attach it to the window
 	
-	tgui::Picture::Ptr door1 = tgui::Picture::create(mClosedDoorTexture);
-	tgui::Picture::Ptr door2 = tgui::Picture::create(mClosedDoorTexture);
-	tgui::Picture::Ptr door3 = tgui::Picture::create(mClosedDoorTexture);
 
-	door1->setPosition(150, 160);
-	door2->setPosition(500,160);
-	door3->setPosition(850, 160);
+	std::unordered_map<Door*, bool> doorMap = { {mDoor1, false}, {mDoor2, false}, {mDoor3, false} };
 
-	gui.add(door1);
-	gui.add(door2);
-	gui.add(door3);
+	switch (rand() % 3) // true means car. false means goat.
+	{
+	case 0:
+		doorMap[mDoor1] = true;
+		break;
+	case 1:
+		doorMap[mDoor2] = true;
+		break;
+	case 2:
+		doorMap[mDoor3] = true;
+		break;
+	}
 
-	door1->connect("Clicked", [&door1, this]()
+	mDoor1->setPosition(150, 160);
+	mDoor2->setPosition(500, 160);
+	mDoor3->setPosition(850, 160);
+
+	gui.add(static_cast<tgui::Widget::Ptr>(mDoor1));
+	gui.add(static_cast<tgui::Widget::Ptr>(mDoor2));
+	gui.add(static_cast<tgui::Widget::Ptr>(mDoor3));
+
+/*
+	mDoor1->connect("Clicked", [&doorMap, &door1, &door2, &door3, this]()
 		{
-			std::cout << "clicked\n";
-			door1->getRenderer()->setTexture(mGoatDoorTexture);
+			std::cout << "Door 1 is clicked\n";
+			if (doorMap[door1] == true)
+			{
+				switch (rand() % 2)
+				{
+				case 0:
+					door2->getRenderer()->setTexture(mGoatDoorTexture);
+					break;
+				case 1:
+					door3->getRenderer()->setTexture(mGoatDoorTexture);
+					break;
+				}
+			}
+			else if (doorMap[door2] == true)
+			{
+				door3->getRenderer()->setTexture(mGoatDoorTexture);
+			}
+			else if (doorMap[door3] == true)
+			{
+				door2->getRenderer()->setTexture(mGoatDoorTexture);
+			}
 		});
 
+	door2->connect("Clicked", [&doorMap, &door1, &door2, &door3, this]()
+		{
+			std::cout << "Door 2 is clicked\n";
+			if (doorMap[door2] == true)
+			{
+				switch (rand() % 2)
+				{
+				case 0:
+					door1->getRenderer()->setTexture(mGoatDoorTexture);
+					break;
+				case 1:
+					door3->getRenderer()->setTexture(mGoatDoorTexture);
+					break;
+				}
+			}
+			else if (doorMap[door1] == true)
+			{
+				door3->getRenderer()->setTexture(mGoatDoorTexture);
+			}
+			else if (doorMap[door3] == true)
+			{
+				door1->getRenderer()->setTexture(mGoatDoorTexture);
+			}
+		});
+
+	door3->connect("Clicked", [&doorMap, &door1, &door2, &door3, this]()
+		{
+			std::cout << "Door 2 is clicked\n";
+			if (doorMap[door3] == true)
+			{
+				switch (rand() % 2)
+				{
+				case 0:
+					door1->getRenderer()->setTexture(mGoatDoorTexture);
+					break;
+				case 1:
+					door2->getRenderer()->setTexture(mGoatDoorTexture);
+					break;
+				}
+			}
+			else if (doorMap[door1] == true)
+			{
+				door2->getRenderer()->setTexture(mGoatDoorTexture);
+			}
+			else if (doorMap[door2] == true)
+			{
+				door1->getRenderer()->setTexture(mGoatDoorTexture);
+			}
+		});
+*/
 	tgui::Label::Ptr label1 = tgui::Label::create();
 	label1->setText("Run simulation");
 	label1->setSize(167.2, 48);
@@ -89,6 +178,7 @@ void Game::Run()
 
 	gui.add(repeatNum);
 	gui.add(choice);
+
 	while (mWindow.isOpen())
 	{
 		sf::Event event;
