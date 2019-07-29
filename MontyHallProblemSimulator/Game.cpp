@@ -30,11 +30,16 @@ bool Game::Init()
 		return false;
 	}
 
-	mDoor1 = new Door(mClosedDoorTexture);
-	mDoor2 = new Door(mClosedDoorTexture);
-	mDoor3 = new Door(mClosedDoorTexture);
+	mDoor1 = std::make_shared<Door>(mClosedDoorTexture);
+	mDoor2 = std::make_shared<Door>(mClosedDoorTexture);
+	mDoor3 = std::make_shared<Door>(mClosedDoorTexture);
 
 	return true;
+}
+
+void SignalHandler()
+{
+
 }
 
 void Game::Run()
@@ -44,7 +49,7 @@ void Game::Run()
 	tgui::Gui gui{ mWindow };  // Create the gui and attach it to the window
 	
 
-	std::unordered_map<Door*, bool> doorMap = { {mDoor1, false}, {mDoor2, false}, {mDoor3, false} };
+	std::unordered_map<std::shared_ptr<Door>, bool> doorMap = { {mDoor1, false}, {mDoor2, false}, {mDoor3, false} };
 
 	switch (rand() % 3) // true means car. false means goat.
 	{
@@ -63,10 +68,11 @@ void Game::Run()
 	mDoor2->setPosition(500, 160);
 	mDoor3->setPosition(850, 160);
 
-	gui.add(static_cast<tgui::Widget::Ptr>(mDoor1));
-	gui.add(static_cast<tgui::Widget::Ptr>(mDoor2));
-	gui.add(static_cast<tgui::Widget::Ptr>(mDoor3));
+	gui.add(mDoor1);
+	gui.add(mDoor2);
+	gui.add(mDoor3);
 
+	mDoor1->connect("Clicked", SignalHandler);
 /*
 	mDoor1->connect("Clicked", [&doorMap, &door1, &door2, &door3, this]()
 		{
