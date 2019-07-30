@@ -12,6 +12,7 @@ public:
 	void SignalHandler1();
 	void SignalHandler2();
 	void SignalHandler3();
+	void Restart();
 private:
 	sf::RenderWindow mWindow;
 	sf::Texture mClosedDoorTexture;
@@ -21,6 +22,8 @@ private:
 	std::shared_ptr<Door> mDoor2;
 	std::shared_ptr<Door> mDoor3;
 	int mClickNumber;
+	int mCarNumber;
+	int mGoatNumber;
 	const int WIDTH = 1280;
 	const int HEIGHT = 720;
 	bool mbWin;
