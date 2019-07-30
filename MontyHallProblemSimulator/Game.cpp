@@ -3,6 +3,7 @@
 
 Game::Game()
 	: mClickNumber(0)
+	, mbWin(false)
 {
 }
 
@@ -104,28 +105,34 @@ void Game::Run()
 				if (mDoor1->IsCar())
 				{
 					mDoor1->getRenderer()->setTexture(mCarDoorTexture);
+					mDoor1->setEnabled(false);
 				}
 				else
 				{
 					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor1->setEnabled(false);
 				}
 
 				if (mDoor2->IsCar())
 				{
 					mDoor2->getRenderer()->setTexture(mCarDoorTexture);
+					mDoor2->setEnabled(false);
 				}
 				else
 				{
 					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor2->setEnabled(false);
 				}
 
 				if (mDoor3->IsCar())
 				{
 					mDoor3->getRenderer()->setTexture(mCarDoorTexture);
+					mDoor3->setEnabled(false);
 				}
 				else
 				{
 					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor3->setEnabled(false);
 				}
 			}
 		});
@@ -167,28 +174,34 @@ void Game::Run()
 				if (mDoor1->IsCar())
 				{
 					mDoor1->getRenderer()->setTexture(mCarDoorTexture);
+					mDoor1->setEnabled(false);
 				}
 				else
 				{
 					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor1->setEnabled(false);
 				}
 
 				if (mDoor2->IsCar())
 				{
 					mDoor2->getRenderer()->setTexture(mCarDoorTexture);
+					mDoor2->setEnabled(false);
 				}
 				else
 				{
 					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor2->setEnabled(false);
 				}
 
 				if (mDoor3->IsCar())
 				{
 					mDoor3->getRenderer()->setTexture(mCarDoorTexture);
+					mDoor3->setEnabled(false);
 				}
 				else
 				{
 					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor3->setEnabled(false);
 				}
 			}
 		});
@@ -230,28 +243,34 @@ void Game::Run()
 				if (mDoor1->IsCar())
 				{
 					mDoor1->getRenderer()->setTexture(mCarDoorTexture);
+					mDoor1->setEnabled(false);
 				}
 				else
 				{
 					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor1->setEnabled(false);
 				}
 
 				if (mDoor2->IsCar())
 				{
 					mDoor2->getRenderer()->setTexture(mCarDoorTexture);
+					mDoor2->setEnabled(false);
 				}
 				else
 				{
 					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor2->setEnabled(false);
 				}
 
 				if (mDoor3->IsCar())
 				{
 					mDoor3->getRenderer()->setTexture(mCarDoorTexture);
+					mDoor3->setEnabled(false);
 				}
 				else
 				{
 					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor3->setEnabled(false);
 				}
 			}
 		});
@@ -271,6 +290,15 @@ void Game::Run()
 	label2->setTextSize(18);
 
 	gui.add(label2);
+
+	tgui::Label::Ptr label3 = tgui::Label::create();
+	label3->setText("You won a car!");
+	label3->setSize(167.2, 25.3399);
+	label3->setPosition(250, 40);
+	label3->setTextSize(18);
+	label3->setVisible(false);
+
+	gui.add(label3);
 
 	tgui::ComboBox::Ptr repeatNum = tgui::ComboBox::create();
 	repeatNum->addItem("10");
