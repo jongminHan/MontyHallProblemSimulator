@@ -1,6 +1,7 @@
 #include "Game.h"
 #include <unordered_map>
 
+
 Game::Game()
 	: mClickNumber(0)
 	, mbWin(false)
@@ -68,212 +69,11 @@ void Game::Run()
 	gui.add(mDoor2);
 	gui.add(mDoor3);
 
-	mDoor1->connect("Clicked", [this]()
-		{
-			std::cout << "Door 1 is clicked\n";
-			mClickNumber++;
+	mDoor1->connect("Clicked", &Game::SignalHandler1, this);
 
-			if (mClickNumber < 2)
-			{
-				if (mDoor1->IsCar())
-				{
-					switch (rand() % 2)
-					{
-					case 0:
-						mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-						mDoor2->setEnabled(false);
-						break;
-					case 1:
-						mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-						mDoor3->setEnabled(false);
-						break;
-					}
-				}
-				else if (mDoor2->IsCar())
-				{
-					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor3->setEnabled(false);
-				}
-				else if (mDoor3->IsCar())
-				{
-					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor2->setEnabled(false);
-				}
-			}
-			else // if mClickNumber = 2
-			{
-				if (mDoor1->IsCar())
-				{
-					mDoor1->getRenderer()->setTexture(mCarDoorTexture);
-					mDoor1->setEnabled(false);
-				}
-				else
-				{
-					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor1->setEnabled(false);
-				}
+	mDoor2->connect("Clicked", &Game::SignalHandler2, this);
 
-				if (mDoor2->IsCar())
-				{
-					mDoor2->getRenderer()->setTexture(mCarDoorTexture);
-					mDoor2->setEnabled(false);
-				}
-				else
-				{
-					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor2->setEnabled(false);
-				}
-
-				if (mDoor3->IsCar())
-				{
-					mDoor3->getRenderer()->setTexture(mCarDoorTexture);
-					mDoor3->setEnabled(false);
-				}
-				else
-				{
-					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor3->setEnabled(false);
-				}
-			}
-		});
-
-	mDoor2->connect("Clicked", [this]()
-		{
-			std::cout << "Door 2 is clicked\n";
-			mClickNumber++;
-
-			if (mClickNumber < 2)
-			{
-				if (mDoor2->IsCar())
-				{
-					switch (rand() % 2)
-					{
-					case 0:
-						mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-						mDoor1->setEnabled(false);
-						break;
-					case 1:
-						mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-						mDoor3->setEnabled(false);
-						break;
-					}
-				}
-				else if (mDoor1->IsCar())
-				{
-					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor3->setEnabled(false);
-				}
-				else if (mDoor3->IsCar())
-				{
-					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor1->setEnabled(false);
-				}
-			}
-			else // if mClickNumber = 2
-			{
-				if (mDoor1->IsCar())
-				{
-					mDoor1->getRenderer()->setTexture(mCarDoorTexture);
-					mDoor1->setEnabled(false);
-				}
-				else
-				{
-					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor1->setEnabled(false);
-				}
-
-				if (mDoor2->IsCar())
-				{
-					mDoor2->getRenderer()->setTexture(mCarDoorTexture);
-					mDoor2->setEnabled(false);
-				}
-				else
-				{
-					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor2->setEnabled(false);
-				}
-
-				if (mDoor3->IsCar())
-				{
-					mDoor3->getRenderer()->setTexture(mCarDoorTexture);
-					mDoor3->setEnabled(false);
-				}
-				else
-				{
-					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor3->setEnabled(false);
-				}
-			}
-		});
-
-	mDoor3->connect("Clicked", [this]()
-		{
-			std::cout << "Door 3 is clicked\n";
-			mClickNumber++;
-
-			if (mClickNumber < 2)
-			{
-				if (mDoor3->IsCar())
-				{
-					switch (rand() % 2)
-					{
-					case 0:
-						mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-						mDoor1->setEnabled(false);
-						break;
-					case 1:
-						mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-						mDoor2->setEnabled(false);
-						break;
-					}
-				}
-				else if (mDoor1->IsCar())
-				{
-					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor2->setEnabled(false);
-				}
-				else if (mDoor2->IsCar())
-				{
-					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor1->setEnabled(false);
-				}
-			}
-			else // if mClickNumber = 2
-			{
-				if (mDoor1->IsCar())
-				{
-					mDoor1->getRenderer()->setTexture(mCarDoorTexture);
-					mDoor1->setEnabled(false);
-				}
-				else
-				{
-					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor1->setEnabled(false);
-				}
-
-				if (mDoor2->IsCar())
-				{
-					mDoor2->getRenderer()->setTexture(mCarDoorTexture);
-					mDoor2->setEnabled(false);
-				}
-				else
-				{
-					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor2->setEnabled(false);
-				}
-
-				if (mDoor3->IsCar())
-				{
-					mDoor3->getRenderer()->setTexture(mCarDoorTexture);
-					mDoor3->setEnabled(false);
-				}
-				else
-				{
-					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor3->setEnabled(false);
-				}
-			}
-		});
+	mDoor3->connect("Clicked", &Game::SignalHandler3, this);
 
 	tgui::Label::Ptr label1 = tgui::Label::create();
 	label1->setText("Run simulation");
@@ -291,14 +91,14 @@ void Game::Run()
 
 	gui.add(label2);
 
-	tgui::Label::Ptr label3 = tgui::Label::create();
-	label3->setText("You won a car!");
-	label3->setSize(167.2, 25.3399);
-	label3->setPosition(250, 40);
-	label3->setTextSize(18);
-	label3->setVisible(false);
+	tgui::Label::Ptr winMessage = tgui::Label::create();
+	winMessage->setText("");
+	winMessage->setSize(167.2, 25.3399);
+	winMessage->setPosition(250, 40);
+	winMessage->setTextSize(18);
+	
+	gui.add(winMessage);
 
-	gui.add(label3);
 
 	tgui::ComboBox::Ptr repeatNum = tgui::ComboBox::create();
 	repeatNum->addItem("10");
@@ -333,8 +133,230 @@ void Game::Run()
 			gui.handleEvent(event); // Pass the event to the widgets
 		}
 
+		if (mClickNumber == 2)
+		{
+			if (mbWin)
+			{
+				winMessage->setText("You won a car!");
+			}
+			else
+			{
+				winMessage->setText("You got a goat.");
+			}
+		}
+
 		mWindow.clear(sf::Color::White);
 		gui.draw(); // Draw all widgets
 		mWindow.display();
+	}
+}
+
+void Game::SignalHandler1()
+{
+	std::cout << "Door 1 is clicked\n";
+	mClickNumber++;
+
+	if (mClickNumber < 2)
+	{
+		if (mDoor1->IsCar())
+		{
+			switch (rand() % 2)
+			{
+			case 0:
+				mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor2->setEnabled(false);
+				break;
+			case 1:
+				mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor3->setEnabled(false);
+				break;
+			}
+		}
+		else if (mDoor2->IsCar())
+		{
+			mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor3->setEnabled(false);
+		}
+		else if (mDoor3->IsCar())
+		{
+			mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor2->setEnabled(false);
+		}
+	}
+	else // if mClickNumber = 2
+	{
+		if (mDoor1->IsCar())
+		{
+			mDoor1->getRenderer()->setTexture(mCarDoorTexture);
+			mDoor1->setEnabled(false);
+			mbWin = true;
+		}
+		else
+		{
+			mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor1->setEnabled(false);
+		}
+
+		if (mDoor2->IsCar())
+		{
+			mDoor2->getRenderer()->setTexture(mCarDoorTexture);
+			mDoor2->setEnabled(false);
+		}
+		else
+		{
+			mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor2->setEnabled(false);
+		}
+
+		if (mDoor3->IsCar())
+		{
+			mDoor3->getRenderer()->setTexture(mCarDoorTexture);
+			mDoor3->setEnabled(false);
+		}
+		else
+		{
+			mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor3->setEnabled(false);
+		}
+	}
+}
+
+void Game::SignalHandler2()
+{
+	std::cout << "Door 2 is clicked\n";
+	mClickNumber++;
+
+	if (mClickNumber < 2)
+	{
+		if (mDoor2->IsCar())
+		{
+			switch (rand() % 2)
+			{
+			case 0:
+				mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor1->setEnabled(false);
+				break;
+			case 1:
+				mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor3->setEnabled(false);
+				break;
+			}
+		}
+		else if (mDoor1->IsCar())
+		{
+			mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor3->setEnabled(false);
+		}
+		else if (mDoor3->IsCar())
+		{
+			mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor1->setEnabled(false);
+		}
+	}
+	else // if mClickNumber = 2
+	{
+		if (mDoor1->IsCar())
+		{
+			mDoor1->getRenderer()->setTexture(mCarDoorTexture);
+			mDoor1->setEnabled(false);
+		}
+		else
+		{
+			mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor1->setEnabled(false);
+		}
+
+		if (mDoor2->IsCar())
+		{
+			mDoor2->getRenderer()->setTexture(mCarDoorTexture);
+			mDoor2->setEnabled(false);
+			mbWin = true;
+		}
+		else
+		{
+			mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor2->setEnabled(false);
+		}
+
+		if (mDoor3->IsCar())
+		{
+			mDoor3->getRenderer()->setTexture(mCarDoorTexture);
+			mDoor3->setEnabled(false);
+		}
+		else
+		{
+			mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor3->setEnabled(false);
+		}
+	}
+}
+
+void Game::SignalHandler3()
+{
+	std::cout << "Door 3 is clicked\n";
+	mClickNumber++;
+
+	if (mClickNumber < 2)
+	{
+		if (mDoor3->IsCar())
+		{
+			switch (rand() % 2)
+			{
+			case 0:
+				mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor1->setEnabled(false);
+				break;
+			case 1:
+				mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor2->setEnabled(false);
+				break;
+			}
+		}
+		else if (mDoor1->IsCar())
+		{
+			mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor2->setEnabled(false);
+		}
+		else if (mDoor2->IsCar())
+		{
+			mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor1->setEnabled(false);
+		}
+	}
+	else // if mClickNumber >= 2
+	{
+		if (mDoor1->IsCar())
+		{
+			mDoor1->getRenderer()->setTexture(mCarDoorTexture);
+			mDoor1->setEnabled(false);
+		}
+		else
+		{
+			mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor1->setEnabled(false);
+		}
+
+		if (mDoor2->IsCar())
+		{
+			mDoor2->getRenderer()->setTexture(mCarDoorTexture);
+			mDoor2->setEnabled(false);
+		}
+		else
+		{
+			mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor2->setEnabled(false);
+		}
+
+		if (mDoor3->IsCar())
+		{
+			mDoor3->getRenderer()->setTexture(mCarDoorTexture);
+			mDoor3->setEnabled(false);
+			mbWin = true;
+		}
+		else
+		{
+			mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor3->setEnabled(false);
+		}
 	}
 }

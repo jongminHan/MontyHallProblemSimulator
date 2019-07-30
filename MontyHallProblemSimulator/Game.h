@@ -9,6 +9,9 @@ public:
 	virtual ~Game();
 	bool Init();
 	void Run();
+	void SignalHandler1();
+	void SignalHandler2();
+	void SignalHandler3();
 private:
 	sf::RenderWindow mWindow;
 	sf::Texture mClosedDoorTexture;
