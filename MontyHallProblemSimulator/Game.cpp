@@ -45,6 +45,7 @@ bool Game::Init()
 	mDoor2->setPosition(500, 160);
 	mDoor3->setPosition(850, 160);
 
+	std::srand(static_cast<unsigned int>(std::time(nullptr)));
 	switch (rand() % 3) // True for car. False for goat.
 	{
 	case 0:
@@ -62,8 +63,6 @@ bool Game::Init()
 
 void Game::Run()
 {
-	std::srand(static_cast<unsigned int>(std::time(nullptr)));
-
 	tgui::Gui gui{ mWindow };  // Create the gui and attach it to the window
 
 	gui.add(mDoor1);
@@ -134,6 +133,16 @@ void Game::Run()
 	goatLabel->setTextSize(18);
 
 	gui.add(goatLabel);
+
+	tgui::Button::Ptr runButton = tgui::Button::create();
+	runButton->setText("RUN");
+	runButton->setPosition(270, 620);
+	runButton->setSize(170, 62.3333);
+	runButton->setTextSize(30);
+
+	gui.add(runButton);
+
+	runButton->connect();
 
 	while (mWindow.isOpen())
 	{
