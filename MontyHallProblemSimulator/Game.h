@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include "Door.h"
+#include "eDoorNumber.h"
 
 class Game
 {
@@ -13,7 +14,7 @@ public:
 	void SignalHandler2();
 	void SignalHandler3();
 	void Restart();
-	void RunSignal(tgui::ComboBox::Ptr repeat, tgui::ComboBox::Ptr choice);
+	void RunSignal(tgui::ComboBox::Ptr repeat, tgui::ComboBox::Ptr choice, tgui::Label::Ptr winMessage, tgui::Label::Ptr carLabel, tgui::Label::Ptr goatLabel);
 private:
 	sf::RenderWindow mWindow;
 	sf::Texture mClosedDoorTexture;

@@ -142,7 +142,7 @@ void Game::Run()
 
 	gui.add(runButton);
 
-	runButton->connect("Clicked", &Game::RunSignal, this, repeatNumBox, choiceBox);
+	runButton->connect("Clicked", &Game::RunSignal, this, repeatNumBox, choiceBox, winMessage, carLabel, goatLabel);
 
 	while (mWindow.isOpen())
 	{
@@ -429,35 +429,186 @@ void Game::Restart()
 	}
 }
 
-void Game::RunSignal(tgui::ComboBox::Ptr repeat, tgui::ComboBox::Ptr choice)
+void Game::RunSignal(tgui::ComboBox::Ptr repeat, tgui::ComboBox::Ptr choice, tgui::Label::Ptr winMessage, tgui::Label::Ptr carLabel, tgui::Label::Ptr goatLabel)
 {
 	if (repeat->getSelectedItem() == "" || choice->getSelectedItem() == "") // If the items were not selected correctly, then do nothing.
 	{
 		std::cout << "Do nothing\n";
 		return;
 	}
+	eDoorNumber doorNumber;
 
 	int num = std::stoi(repeat->getSelectedItem().toAnsiString());  // Convert string to int
 
 	for (int i = 0; i < num; i++)
 	{
+		std::cout << i << std::endl;
 		// Step1: Choose one door randomly.
 		int random = rand() % 3;
 		switch (random)
 		{
 		case 0:
-			SignalHandler1();
+			doorNumber = DOOR1;
 			break;
 		case 1:
-			SignalHandler2();
+			doorNumber = DOOR2;
 			break;
 		case 2:
-			SignalHandler3();
+			doorNumber = DOOR3;
 			break;
 		}
 
 		// Step2: Show one door which has a goat.
-		// Step3: Make final decision depent on the choice.
+		switch (doorNumber)
+		{
+		case DOOR1:
+			if (mDoor2->IsCar())
+			{
+				mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+			}
+			else if (mDoor3->IsCar())
+			{
+				mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+			}
+			break;
+		case DOOR2:
+			if (mDoor1->IsCar())
+			{
+				mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+			}
+			else if (mDoor3->IsCar())
+			{
+				mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+			}
+			break;
+		case DOOR3:
+			if (mDoor2->IsCar())
+			{
+				mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+			}
+			else if (mDoor1->IsCar())
+			{
+				mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+			}
+			break;
+		}
+
+		// Step3: Make final decision depend on the choice.
+		if (choice->getSelectedItem() == "Keep the choice.")
+		{
+			switch (doorNumber)
+			{
+			case DOOR1:
+				if (mDoor1->IsCar()) // You won the game in this case.
+				{
+					mDoor1->getRenderer()->setTexture(mCarDoorTexture);
+					mbWin = true;
+					mCarNumber++;
+				}
+				else  // You lost the game in this case.
+				{
+					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+					mGoatNumber++;
+				}
+
+				if (mDoor2->IsCar())
+				{
+					mDoor2->getRenderer()->setTexture(mCarDoorTexture);
+				}
+				else
+				{
+					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+				}
+
+				if (mDoor3->IsCar())
+				{
+					mDoor3->getRenderer()->setTexture(mCarDoorTexture);
+				}
+				else
+				{
+					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+				}
+				break;
+			case DOOR2:
+				if (mDoor1->IsCar())
+				{
+					mDoor1->getRenderer()->setTexture(mCarDoorTexture);
+				}
+				else
+				{
+					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+				}
+
+				if (mDoor2->IsCar()) // You won the game.
+				{
+					mDoor2->getRenderer()->setTexture(mCarDoorTexture);
+					mbWin = true;
+					mCarNumber++;
+				}
+				else  // You lost the game in this case.
+				{
+					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+					mGoatNumber++;
+				}
+
+				if (mDoor3->IsCar())
+				{
+					mDoor3->getRenderer()->setTexture(mCarDoorTexture);
+				}
+				else
+				{
+					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+				}
+				break;
+			case DOOR3:
+				if (mDoor1->IsCar())
+				{
+					mDoor1->getRenderer()->setTexture(mCarDoorTexture);
+				}
+				else
+				{
+					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+				}
+
+				if (mDoor2->IsCar())
+				{
+					mDoor2->getRenderer()->setTexture(mCarDoorTexture);
+				}
+				else
+				{
+					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+				}
+
+				if (mDoor3->IsCar()) // You won the game.
+				{
+					mDoor3->getRenderer()->setTexture(mCarDoorTexture);
+					mbWin = true;
+					mCarNumber++;
+				}
+				else // You lost the game in this case.
+				{
+					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+					mGoatNumber++;
+				}
+				break;
+			}
+		}
+		else if (choice->getSelectedItem() == "Change the choice.")
+		{
+
+		}
+
+		if (mbWin)
+		{
+			winMessage->setText("You won a car!\nClick any door to restart the game.");
+			carLabel->setText("Car: " + std::to_string(mCarNumber));
+		}
+		else
+		{
+			winMessage->setText("You got a goat.\nClick any door to restart the game.");
+			goatLabel->setText("Goat: " + std::to_string(mGoatNumber));
+		}
+
+		Restart();
 	}
-	
 }
