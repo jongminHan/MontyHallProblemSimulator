@@ -94,29 +94,29 @@ void Game::Run()
 	winMessage->setSize(387.2, 46.5575);
 	winMessage->setPosition(250, 40);
 	winMessage->setTextSize(18);
-	
+
 	gui.add(winMessage);
 
 
-	tgui::ComboBox::Ptr repeatNum = tgui::ComboBox::create();
-	repeatNum->addItem("10");
-	repeatNum->addItem("50");
-	repeatNum->addItem("100");
-	repeatNum->addItem("500");
-	repeatNum->addItem("10000");
-	repeatNum->setPosition(270, 560);
-	repeatNum->setSize(160, 22);
-	repeatNum->setTextSize(18);
+	tgui::ComboBox::Ptr repeatNumBox = tgui::ComboBox::create();
+	repeatNumBox->addItem("10");
+	repeatNumBox->addItem("50");
+	repeatNumBox->addItem("100");
+	repeatNumBox->addItem("500");
+	repeatNumBox->addItem("10000");
+	repeatNumBox->setPosition(270, 560);
+	repeatNumBox->setSize(160, 22);
+	repeatNumBox->setTextSize(18);
 
-	tgui::ComboBox::Ptr choice = tgui::ComboBox::create();
-	choice->addItem("Keep the choice.");
-	choice->addItem("Change the choice.");
-	choice->setPosition(600, 560);
-	choice->setSize(200, 22);
-	choice->setTextSize(18);
+	tgui::ComboBox::Ptr choiceBox = tgui::ComboBox::create();
+	choiceBox->addItem("Keep the choice.");
+	choiceBox->addItem("Change the choice.");
+	choiceBox->setPosition(600, 560);
+	choiceBox->setSize(200, 22);
+	choiceBox->setTextSize(18);
 
-	gui.add(repeatNum);
-	gui.add(choice);
+	gui.add(repeatNumBox);
+	gui.add(choiceBox);
 
 	tgui::Label::Ptr carLabel = tgui::Label::create();
 	carLabel->setText("Car: " + std::to_string(mCarNumber));
@@ -142,7 +142,7 @@ void Game::Run()
 
 	gui.add(runButton);
 
-	runButton->connect();
+	runButton->connect("Clicked", &Game::RunSignal, this, repeatNumBox, choiceBox);
 
 	while (mWindow.isOpen())
 	{
@@ -167,7 +167,7 @@ void Game::Run()
 			if (mbWin)
 			{
 				winMessage->setText("You won a car!\nClick any door to restart the game.");
-				carLabel->setText("Car: " + std::to_string(mCarNumber)); 
+				carLabel->setText("Car: " + std::to_string(mCarNumber));
 			}
 			else
 			{
@@ -427,4 +427,37 @@ void Game::Restart()
 		mDoor3->SetCar(true);
 		break;
 	}
+}
+
+void Game::RunSignal(tgui::ComboBox::Ptr repeat, tgui::ComboBox::Ptr choice)
+{
+	if (repeat->getSelectedItem() == "" || choice->getSelectedItem() == "") // If the items were not selected correctly, then do nothing.
+	{
+		std::cout << "Do nothing\n";
+		return;
+	}
+
+	int num = std::stoi(repeat->getSelectedItem().toAnsiString());  // Convert string to int
+
+	for (int i = 0; i < num; i++)
+	{
+		// Step1: Choose one door randomly.
+		int random = rand() % 3;
+		switch (random)
+		{
+		case 0:
+			SignalHandler1();
+			break;
+		case 1:
+			SignalHandler2();
+			break;
+		case 2:
+			SignalHandler3();
+			break;
+		}
+
+		// Step2: Show one door which has a goat.
+		// Step3: Make final decision depent on the choice.
+	}
+	
 }

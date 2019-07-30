@@ -13,6 +13,7 @@ public:
 	void SignalHandler2();
 	void SignalHandler3();
 	void Restart();
+	void RunSignal(tgui::ComboBox::Ptr repeat, tgui::ComboBox::Ptr choice);
 private:
 	sf::RenderWindow mWindow;
 	sf::Texture mClosedDoorTexture;
