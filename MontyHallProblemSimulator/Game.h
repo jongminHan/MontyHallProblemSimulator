@@ -16,6 +16,7 @@ public:
 	void Restart();
 	void RunSignal(tgui::ComboBox::Ptr repeat, tgui::ComboBox::Ptr choice, tgui::Label::Ptr winMessage, tgui::Label::Ptr carLabel, tgui::Label::Ptr goatLabel);
 private:
+	std::shared_ptr<tgui::Gui> mGui;
 	sf::RenderWindow mWindow;
 	sf::Texture mClosedDoorTexture;
 	sf::Texture mGoatDoorTexture;

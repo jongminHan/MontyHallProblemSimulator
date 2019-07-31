@@ -17,6 +17,7 @@ Game::~Game()
 bool Game::Init()
 {
 	mWindow.create(sf::VideoMode(WIDTH, HEIGHT), "Monty Hall Problem Simulator");
+	mGui = std::make_shared<tgui::Gui>(mWindow); // Create the gui and attach it to the window
 
 	if (!mClosedDoorTexture.loadFromFile("C:\\Users\\Jongmin\\Documents\\MontyHallProblemSimulator\\MontyHallProblemSimulator\\closedDoor.png"))
 	{
@@ -63,11 +64,9 @@ bool Game::Init()
 
 void Game::Run()
 {
-	tgui::Gui gui{ mWindow };  // Create the gui and attach it to the window
-
-	gui.add(mDoor1);
-	gui.add(mDoor2);
-	gui.add(mDoor3);
+	mGui->add(mDoor1);
+	mGui->add(mDoor2);
+	mGui->add(mDoor3);
 
 	mDoor1->connect("Clicked", &Game::SignalHandler1, this);
 	mDoor2->connect("Clicked", &Game::SignalHandler2, this);
@@ -79,7 +78,7 @@ void Game::Run()
 	label1->setPosition(90, 560);
 	label1->setTextSize(18);
 
-	gui.add(label1);
+	mGui->add(label1);
 
 	tgui::Label::Ptr label2 = tgui::Label::create();
 	label2->setText("times.    And");
@@ -87,7 +86,7 @@ void Game::Run()
 	label2->setPosition(450, 560);
 	label2->setTextSize(18);
 
-	gui.add(label2);
+	mGui->add(label2);
 
 	tgui::Label::Ptr winMessage = tgui::Label::create();
 	winMessage->setText("");
@@ -95,7 +94,7 @@ void Game::Run()
 	winMessage->setPosition(250, 40);
 	winMessage->setTextSize(18);
 
-	gui.add(winMessage);
+	mGui->add(winMessage);
 
 
 	tgui::ComboBox::Ptr repeatNumBox = tgui::ComboBox::create();
@@ -115,24 +114,24 @@ void Game::Run()
 	choiceBox->setSize(200, 22);
 	choiceBox->setTextSize(18);
 
-	gui.add(repeatNumBox);
-	gui.add(choiceBox);
+	mGui->add(repeatNumBox);
+	mGui->add(choiceBox);
 
 	tgui::Label::Ptr carLabel = tgui::Label::create();
 	carLabel->setText("Car: " + std::to_string(mCarNumber));
 	carLabel->setPosition(930, 560);
-	carLabel->setSize(137.2, 30.6524);
+	carLabel->setSize(200.f, 30.6524);
 	carLabel->setTextSize(18);
 
-	gui.add(carLabel);
+	mGui->add(carLabel);
 
 	tgui::Label::Ptr goatLabel = tgui::Label::create();
 	goatLabel->setText("Goat: " + std::to_string(mGoatNumber));
 	goatLabel->setPosition(930, 590);
-	goatLabel->setSize(137.2, 30.6524);
+	goatLabel->setSize(200.f, 30.6524);
 	goatLabel->setTextSize(18);
 
-	gui.add(goatLabel);
+	mGui->add(goatLabel);
 
 	tgui::Button::Ptr runButton = tgui::Button::create();
 	runButton->setText("RUN");
@@ -140,7 +139,7 @@ void Game::Run()
 	runButton->setSize(170, 62.3333);
 	runButton->setTextSize(30);
 
-	gui.add(runButton);
+	mGui->add(runButton);
 
 	runButton->connect("Clicked", &Game::RunSignal, this, repeatNumBox, choiceBox, winMessage, carLabel, goatLabel);
 
@@ -154,7 +153,7 @@ void Game::Run()
 				mWindow.close();
 			}
 
-			gui.handleEvent(event); // Pass the event to the widgets
+			mGui->handleEvent(event); // Pass the event to the widgets
 		}
 
 		if (mClickNumber == 0)  // Remove the text when the game restarts.
@@ -177,7 +176,7 @@ void Game::Run()
 		}
 
 		mWindow.clear(sf::Color::White);
-		gui.draw(); // Draw all widgets
+		mGui->draw(); // Draw all widgets
 		mWindow.display();
 	}
 }
@@ -195,10 +194,12 @@ void Game::SignalHandler1()
 			{
 			case 0:
 				mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor2->SetOpen(true);
 				mDoor2->setEnabled(false);
 				break;
 			case 1:
 				mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor3->SetOpen(true);
 				mDoor3->setEnabled(false);
 				break;
 			}
@@ -206,11 +207,13 @@ void Game::SignalHandler1()
 		else if (mDoor2->IsCar())
 		{
 			mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor3->SetOpen(true);
 			mDoor3->setEnabled(false);
 		}
 		else if (mDoor3->IsCar())
 		{
 			mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor2->SetOpen(true);
 			mDoor2->setEnabled(false);
 		}
 	}
@@ -223,31 +226,37 @@ void Game::SignalHandler1()
 		if (mDoor1->IsCar()) // You won the game in this case.
 		{
 			mDoor1->getRenderer()->setTexture(mCarDoorTexture);
+			mDoor1->SetOpen(true);
 			mbWin = true;
 			mCarNumber++;
 		}
 		else  // You lost the game in this case.
 		{
 			mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor1->SetOpen(true);
 			mGoatNumber++;
 		}
 
 		if (mDoor2->IsCar())
 		{
 			mDoor2->getRenderer()->setTexture(mCarDoorTexture);
+			mDoor2->SetOpen(true);
 		}
 		else
 		{
 			mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor2->SetOpen(true);
 		}
 
 		if (mDoor3->IsCar())
 		{
 			mDoor3->getRenderer()->setTexture(mCarDoorTexture);
+			mDoor3->SetOpen(true);
 		}
 		else
 		{
 			mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor3->SetOpen(true);
 		}
 	}
 	else if (mClickNumber == 3)
@@ -270,10 +279,12 @@ void Game::SignalHandler2()
 			case 0:
 				mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
 				mDoor1->setEnabled(false);
+				mDoor1->SetOpen(true);
 				break;
 			case 1:
 				mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
 				mDoor3->setEnabled(false);
+				mDoor3->SetOpen(true);
 				break;
 			}
 		}
@@ -281,11 +292,13 @@ void Game::SignalHandler2()
 		{
 			mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
 			mDoor3->setEnabled(false);
+			mDoor3->SetOpen(true);
 		}
 		else if (mDoor3->IsCar())
 		{
 			mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
 			mDoor1->setEnabled(false);
+			mDoor1->SetOpen(true);
 		}
 	}
 	else if (mClickNumber == 2)
@@ -297,10 +310,12 @@ void Game::SignalHandler2()
 		if (mDoor1->IsCar())
 		{
 			mDoor1->getRenderer()->setTexture(mCarDoorTexture);
+			mDoor1->SetOpen(true);
 		}
 		else
 		{
 			mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor1->SetOpen(true);
 		}
 
 		if (mDoor2->IsCar())
@@ -308,20 +323,24 @@ void Game::SignalHandler2()
 			mDoor2->getRenderer()->setTexture(mCarDoorTexture);
 			mbWin = true;
 			mCarNumber++;
+			mDoor2->SetOpen(true);
 		}
 		else  // You lost the game in this case.
 		{
 			mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
 			mGoatNumber++;
+			mDoor2->SetOpen(true);
 		}
 
 		if (mDoor3->IsCar())
 		{
 			mDoor3->getRenderer()->setTexture(mCarDoorTexture);
+			mDoor3->SetOpen(true);
 		}
 		else
 		{
 			mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor3->SetOpen(true);
 		}
 	}
 	else if (mClickNumber == 3)
@@ -344,10 +363,12 @@ void Game::SignalHandler3()
 			case 0:
 				mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
 				mDoor1->setEnabled(false);
+				mDoor1->SetOpen(true);
 				break;
 			case 1:
 				mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
 				mDoor2->setEnabled(false);
+				mDoor2->SetOpen(true);
 				break;
 			}
 		}
@@ -355,11 +376,13 @@ void Game::SignalHandler3()
 		{
 			mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
 			mDoor2->setEnabled(false);
+			mDoor2->SetOpen(true);
 		}
 		else if (mDoor2->IsCar())
 		{
 			mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
 			mDoor1->setEnabled(false);
+			mDoor1->SetOpen(true);
 		}
 	}
 	else if (mClickNumber == 2)
@@ -371,30 +394,36 @@ void Game::SignalHandler3()
 		if (mDoor1->IsCar())
 		{
 			mDoor1->getRenderer()->setTexture(mCarDoorTexture);
+			mDoor1->SetOpen(true);
 		}
 		else
 		{
 			mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor1->SetOpen(true);
 		}
 
 		if (mDoor2->IsCar())
 		{
 			mDoor2->getRenderer()->setTexture(mCarDoorTexture);
+			mDoor2->SetOpen(true);
 		}
 		else
 		{
 			mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor2->SetOpen(true);
 		}
 
 		if (mDoor3->IsCar())
 		{
 			mDoor3->getRenderer()->setTexture(mCarDoorTexture);
+			mDoor3->SetOpen(true);
 			mbWin = true;
 			mCarNumber++;
 		}
 		else // You lost the game in this case.
 		{
 			mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+			mDoor3->SetOpen(true);
 			mGoatNumber++;
 		}
 	}
@@ -415,6 +444,11 @@ void Game::Restart()
 	mDoor1->SetCar(false);
 	mDoor2->SetCar(false);
 	mDoor3->SetCar(false);
+
+	mDoor1->SetOpen(false);
+	mDoor2->SetOpen(false);
+	mDoor3->SetOpen(false);
+
 	switch (rand() % 3) // True for car. False for goat.
 	{
 	case 0:
@@ -465,30 +499,51 @@ void Game::RunSignal(tgui::ComboBox::Ptr repeat, tgui::ComboBox::Ptr choice, tgu
 			if (mDoor2->IsCar())
 			{
 				mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor3->SetOpen(true);
 			}
 			else if (mDoor3->IsCar())
 			{
 				mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor2->SetOpen(true);
+			}
+			else
+			{
+				mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor2->SetOpen(true);
 			}
 			break;
 		case DOOR2:
 			if (mDoor1->IsCar())
 			{
 				mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor3->SetOpen(true);
 			}
 			else if (mDoor3->IsCar())
 			{
 				mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor1->SetOpen(true);
+			}
+			else
+			{
+				mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor1->SetOpen(true);
 			}
 			break;
 		case DOOR3:
 			if (mDoor2->IsCar())
 			{
 				mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor1->SetOpen(true);
 			}
 			else if (mDoor1->IsCar())
 			{
 				mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor2->SetOpen(true);
+			}
+			else
+			{
+				mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+				mDoor2->SetOpen(true);
 			}
 			break;
 		}
@@ -502,86 +557,103 @@ void Game::RunSignal(tgui::ComboBox::Ptr repeat, tgui::ComboBox::Ptr choice, tgu
 				if (mDoor1->IsCar()) // You won the game in this case.
 				{
 					mDoor1->getRenderer()->setTexture(mCarDoorTexture);
+					mDoor1->SetOpen(true);
 					mbWin = true;
 					mCarNumber++;
 				}
 				else  // You lost the game in this case.
 				{
 					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor1->SetOpen(true);
 					mGoatNumber++;
 				}
 
 				if (mDoor2->IsCar())
 				{
 					mDoor2->getRenderer()->setTexture(mCarDoorTexture);
+					mDoor2->SetOpen(true);
 				}
 				else
 				{
 					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor2->SetOpen(true);
 				}
 
 				if (mDoor3->IsCar())
 				{
 					mDoor3->getRenderer()->setTexture(mCarDoorTexture);
+					mDoor3->SetOpen(true);
 				}
 				else
 				{
 					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor3->SetOpen(true);
 				}
 				break;
 			case DOOR2:
 				if (mDoor1->IsCar())
 				{
 					mDoor1->getRenderer()->setTexture(mCarDoorTexture);
+					mDoor1->SetOpen(true);
 				}
 				else
 				{
 					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor1->SetOpen(true);
 				}
 
 				if (mDoor2->IsCar()) // You won the game.
 				{
 					mDoor2->getRenderer()->setTexture(mCarDoorTexture);
+					mDoor2->SetOpen(true);
 					mbWin = true;
 					mCarNumber++;
 				}
 				else  // You lost the game in this case.
 				{
 					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor2->SetOpen(true);
 					mGoatNumber++;
 				}
 
 				if (mDoor3->IsCar())
 				{
 					mDoor3->getRenderer()->setTexture(mCarDoorTexture);
+					mDoor3->SetOpen(true);
 				}
 				else
 				{
 					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor3->SetOpen(true);
 				}
 				break;
 			case DOOR3:
 				if (mDoor1->IsCar())
 				{
 					mDoor1->getRenderer()->setTexture(mCarDoorTexture);
+					mDoor1->SetOpen(true);
 				}
 				else
 				{
 					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor1->SetOpen(true);
 				}
 
 				if (mDoor2->IsCar())
 				{
 					mDoor2->getRenderer()->setTexture(mCarDoorTexture);
+					mDoor2->SetOpen(true);
 				}
 				else
 				{
 					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+					mDoor2->SetOpen(true);
 				}
 
 				if (mDoor3->IsCar()) // You won the game.
 				{
 					mDoor3->getRenderer()->setTexture(mCarDoorTexture);
+					mDoor3->SetOpen(true);
 					mbWin = true;
 					mCarNumber++;
 				}
@@ -589,25 +661,135 @@ void Game::RunSignal(tgui::ComboBox::Ptr repeat, tgui::ComboBox::Ptr choice, tgu
 				{
 					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
 					mGoatNumber++;
+					mDoor3->SetOpen(true);
 				}
 				break;
 			}
 		}
 		else if (choice->getSelectedItem() == "Change the choice.")
 		{
-
+			switch (doorNumber)
+			{
+			case DOOR1:
+				if (mDoor2->IsOpened()) // If door2 is already opened, then open door3.
+				{
+					if (mDoor3->IsCar())
+					{
+						mDoor3->getRenderer()->setTexture(mCarDoorTexture);
+						mDoor3->SetOpen(true);
+						mbWin = true;
+						mCarNumber++;
+					}
+					else
+					{
+						mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+						mDoor3->SetOpen(true);
+						mGoatNumber++;
+					}
+				}
+				else if (mDoor3->IsOpened()) // If door3 is already opened, then open door2.
+				{
+					if (mDoor2->IsCar())
+					{
+						mDoor2->getRenderer()->setTexture(mCarDoorTexture);
+						mDoor2->SetOpen(true);
+						mbWin = true;
+						mCarNumber++;
+					}
+					else
+					{
+						mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+						mDoor2->SetOpen(true);
+						mGoatNumber++;
+					}
+				}
+				break;
+			case DOOR2:
+				if (mDoor1->IsOpened()) // If door1 is already opened, then open door3.
+				{
+					if (mDoor3->IsCar())
+					{
+						mDoor3->getRenderer()->setTexture(mCarDoorTexture);
+						mDoor3->SetOpen(true);
+						mbWin = true;
+						mCarNumber++;
+					}
+					else
+					{
+						mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
+						mDoor3->SetOpen(true);
+						mGoatNumber++;
+					}
+				}
+				else if (mDoor3->IsOpened()) // If door3 is already opened, then open door1.
+				{
+					if (mDoor1->IsCar())
+					{
+						mDoor1->getRenderer()->setTexture(mCarDoorTexture);
+						mDoor1->SetOpen(true);
+						mbWin = true;
+						mCarNumber++;
+					}
+					else
+					{
+						mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+						mDoor1->SetOpen(true);
+						mGoatNumber++;
+					}
+				}
+				break;
+			case DOOR3:
+				if (mDoor2->IsOpened()) // If door2 is already opened, then open door1.
+				{
+					if (mDoor1->IsCar())
+					{
+						mDoor1->getRenderer()->setTexture(mCarDoorTexture);
+						mDoor1->SetOpen(true);
+						mbWin = true;
+						mCarNumber++;
+					}
+					else
+					{
+						mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
+						mDoor1->SetOpen(true);
+						mGoatNumber++;
+					}
+				}
+				else if (mDoor1->IsOpened()) // If door1 is already opened, then open door2.
+				{
+					if (mDoor2->IsCar())
+					{
+						mDoor2->getRenderer()->setTexture(mCarDoorTexture);
+						mbWin = true;
+						mCarNumber++;
+						mDoor2->SetOpen(true);
+					}
+					else
+					{
+						mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
+						mGoatNumber++;
+						mDoor2->SetOpen(true);
+					}
+				}
+				break;
+			}
 		}
 
 		if (mbWin)
 		{
 			winMessage->setText("You won a car!\nClick any door to restart the game.");
-			carLabel->setText("Car: " + std::to_string(mCarNumber));
+			
+			carLabel->setText("Car: " + std::to_string(mCarNumber) + "(" + std::to_string(static_cast<float>(mCarNumber) / static_cast<float>(mCarNumber + mGoatNumber)) + ")");
 		}
 		else
 		{
 			winMessage->setText("You got a goat.\nClick any door to restart the game.");
-			goatLabel->setText("Goat: " + std::to_string(mGoatNumber));
+			goatLabel->setText("Goat: " + std::to_string(mGoatNumber) + "(" + std::to_string(static_cast<float>(mGoatNumber) / static_cast<float>(mCarNumber + mGoatNumber)) + ")");
 		}
+
+		mWindow.clear(sf::Color::White);
+		mGui->draw(); // Draw all widgets
+		mWindow.display();
 
 		Restart();
 	}
