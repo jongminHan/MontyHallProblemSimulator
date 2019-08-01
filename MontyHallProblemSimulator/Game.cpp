@@ -8,6 +8,7 @@ Game::Game()
 	, mGoatNumber(0)
 	, mbWin(false)
 {
+	mDoorList.reserve(3);
 }
 
 Game::~Game()
@@ -37,41 +38,29 @@ bool Game::Init()
 		return false;
 	}
 
-	mDoor1 = std::make_shared<Door>(mClosedDoorTexture);
-	mDoor2 = std::make_shared<Door>(mClosedDoorTexture);
-	mDoor3 = std::make_shared<Door>(mClosedDoorTexture);
+	mDoorList.push_back(std::make_shared<Door>(mClosedDoorTexture));
+	mDoorList.push_back(std::make_shared<Door>(mClosedDoorTexture));
+	mDoorList.push_back(std::make_shared<Door>(mClosedDoorTexture));
 
 
-	mDoor1->setPosition(150, 160);
-	mDoor2->setPosition(500, 160);
-	mDoor3->setPosition(850, 160);
+	mDoorList[0]->setPosition(150, 160);
+	mDoorList[1]->setPosition(500, 160);
+	mDoorList[2]->setPosition(850, 160);
 
 	std::srand(static_cast<unsigned int>(std::time(nullptr)));
-	switch (rand() % 3) // True for car. False for goat.
-	{
-	case 0:
-		mDoor1->SetCar(true);
-		break;
-	case 1:
-		mDoor2->SetCar(true);
-		break;
-	case 2:
-		mDoor3->SetCar(true);
-		break;
-	}
+
+	mDoorList[rand() % 3]->SetCar(true); // True for car. False for goat.
 	return true;
 }
 
 void Game::Run()
 {
-	mGui->add(mDoor1);
-	mGui->add(mDoor2);
-	mGui->add(mDoor3);
-
-	mDoor1->connect("Clicked", &Game::SignalHandler1, this);
-	mDoor2->connect("Clicked", &Game::SignalHandler2, this);
-	mDoor3->connect("Clicked", &Game::SignalHandler3, this);
-
+	for (auto iter = mDoorList.begin(); iter != mDoorList.end(); iter++)
+	{
+		mGui->add(*iter);
+		(*iter)->connect("Clicked", &Game::SignalHandler, this, *iter);
+	}
+	
 	tgui::Label::Ptr label1 = tgui::Label::create();
 	label1->setText("Run simulation");
 	label1->setSize(167.2, 48);
@@ -181,284 +170,86 @@ void Game::Run()
 	}
 }
 
-void Game::SignalHandler1()
-{
-	std::cout << "Door 1 is clicked\n";
-	mClickNumber++;
-
-	if (mClickNumber < 2)
-	{
-		if (mDoor1->IsCar())
-		{
-			switch (rand() % 2)
-			{
-			case 0:
-				mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-				mDoor2->SetOpen(true);
-				mDoor2->setEnabled(false);
-				break;
-			case 1:
-				mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-				mDoor3->SetOpen(true);
-				mDoor3->setEnabled(false);
-				break;
-			}
-		}
-		else if (mDoor2->IsCar())
-		{
-			mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-			mDoor3->SetOpen(true);
-			mDoor3->setEnabled(false);
-		}
-		else if (mDoor3->IsCar())
-		{
-			mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-			mDoor2->SetOpen(true);
-			mDoor2->setEnabled(false);
-		}
-	}
-	else if (mClickNumber == 2)
-	{
-		mDoor1->setEnabled(true);
-		mDoor2->setEnabled(true);
-		mDoor3->setEnabled(true);
-
-		if (mDoor1->IsCar()) // You won the game in this case.
-		{
-			mDoor1->getRenderer()->setTexture(mCarDoorTexture);
-			mDoor1->SetOpen(true);
-			mbWin = true;
-			mCarNumber++;
-		}
-		else  // You lost the game in this case.
-		{
-			mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-			mDoor1->SetOpen(true);
-			mGoatNumber++;
-		}
-
-		if (mDoor2->IsCar())
-		{
-			mDoor2->getRenderer()->setTexture(mCarDoorTexture);
-			mDoor2->SetOpen(true);
-		}
-		else
-		{
-			mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-			mDoor2->SetOpen(true);
-		}
-
-		if (mDoor3->IsCar())
-		{
-			mDoor3->getRenderer()->setTexture(mCarDoorTexture);
-			mDoor3->SetOpen(true);
-		}
-		else
-		{
-			mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-			mDoor3->SetOpen(true);
-		}
-	}
-	else if (mClickNumber == 3)
-	{
-		Restart();
-	}
-}
-
-void Game::SignalHandler2()
-{
-	std::cout << "Door 2 is clicked\n";
-	mClickNumber++;
-
-	if (mClickNumber < 2)
-	{
-		if (mDoor2->IsCar())
-		{
-			switch (rand() % 2)
-			{
-			case 0:
-				mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-				mDoor1->setEnabled(false);
-				mDoor1->SetOpen(true);
-				break;
-			case 1:
-				mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-				mDoor3->setEnabled(false);
-				mDoor3->SetOpen(true);
-				break;
-			}
-		}
-		else if (mDoor1->IsCar())
-		{
-			mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-			mDoor3->setEnabled(false);
-			mDoor3->SetOpen(true);
-		}
-		else if (mDoor3->IsCar())
-		{
-			mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-			mDoor1->setEnabled(false);
-			mDoor1->SetOpen(true);
-		}
-	}
-	else if (mClickNumber == 2)
-	{
-		mDoor1->setEnabled(true);
-		mDoor2->setEnabled(true);
-		mDoor3->setEnabled(true);
-
-		if (mDoor1->IsCar())
-		{
-			mDoor1->getRenderer()->setTexture(mCarDoorTexture);
-			mDoor1->SetOpen(true);
-		}
-		else
-		{
-			mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-			mDoor1->SetOpen(true);
-		}
-
-		if (mDoor2->IsCar())
-		{
-			mDoor2->getRenderer()->setTexture(mCarDoorTexture);
-			mbWin = true;
-			mCarNumber++;
-			mDoor2->SetOpen(true);
-		}
-		else  // You lost the game in this case.
-		{
-			mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-			mGoatNumber++;
-			mDoor2->SetOpen(true);
-		}
-
-		if (mDoor3->IsCar())
-		{
-			mDoor3->getRenderer()->setTexture(mCarDoorTexture);
-			mDoor3->SetOpen(true);
-		}
-		else
-		{
-			mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-			mDoor3->SetOpen(true);
-		}
-	}
-	else if (mClickNumber == 3)
-	{
-		Restart();
-	}
-}
-
-void Game::SignalHandler3()
-{
-	std::cout << "Door 3 is clicked\n";
-	mClickNumber++;
-
-	if (mClickNumber < 2)
-	{
-		if (mDoor3->IsCar())
-		{
-			switch (rand() % 2)
-			{
-			case 0:
-				mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-				mDoor1->setEnabled(false);
-				mDoor1->SetOpen(true);
-				break;
-			case 1:
-				mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-				mDoor2->setEnabled(false);
-				mDoor2->SetOpen(true);
-				break;
-			}
-		}
-		else if (mDoor1->IsCar())
-		{
-			mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-			mDoor2->setEnabled(false);
-			mDoor2->SetOpen(true);
-		}
-		else if (mDoor2->IsCar())
-		{
-			mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-			mDoor1->setEnabled(false);
-			mDoor1->SetOpen(true);
-		}
-	}
-	else if (mClickNumber == 2)
-	{
-		mDoor1->setEnabled(true);
-		mDoor2->setEnabled(true);
-		mDoor3->setEnabled(true);
-
-		if (mDoor1->IsCar())
-		{
-			mDoor1->getRenderer()->setTexture(mCarDoorTexture);
-			mDoor1->SetOpen(true);
-		}
-		else
-		{
-			mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-			mDoor1->SetOpen(true);
-		}
-
-		if (mDoor2->IsCar())
-		{
-			mDoor2->getRenderer()->setTexture(mCarDoorTexture);
-			mDoor2->SetOpen(true);
-		}
-		else
-		{
-			mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-			mDoor2->SetOpen(true);
-		}
-
-		if (mDoor3->IsCar())
-		{
-			mDoor3->getRenderer()->setTexture(mCarDoorTexture);
-			mDoor3->SetOpen(true);
-			mbWin = true;
-			mCarNumber++;
-		}
-		else // You lost the game in this case.
-		{
-			mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-			mDoor3->SetOpen(true);
-			mGoatNumber++;
-		}
-	}
-	else if (mClickNumber == 3)
-	{
-		Restart();
-	}
-}
-
 void Game::Restart()
 {
 	mClickNumber = 0;
-	mDoor1->getRenderer()->setTexture(mClosedDoorTexture);
-	mDoor2->getRenderer()->setTexture(mClosedDoorTexture);
-	mDoor3->getRenderer()->setTexture(mClosedDoorTexture);
+
+	for (auto iter = mDoorList.begin(); iter != mDoorList.end(); iter++)
+	{
+		(*iter)->getRenderer()->setTexture(mClosedDoorTexture);
+		(*iter)->SetCar(false);
+		(*iter)->SetOpen(false);
+		(*iter)->SetClicked(false);
+	}
 	mbWin = false;
 
-	mDoor1->SetCar(false);
-	mDoor2->SetCar(false);
-	mDoor3->SetCar(false);
+	mDoorList[rand() % 3]->SetCar(true); // True for car. False for goat.
+}
 
-	mDoor1->SetOpen(false);
-	mDoor2->SetOpen(false);
-	mDoor3->SetOpen(false);
 
-	switch (rand() % 3) // True for car. False for goat.
+void Game::SignalHandler(std::shared_ptr<Door> door)
+{
+	mClickNumber++;
+
+	switch (mClickNumber)
 	{
-	case 0:
-		mDoor1->SetCar(true);
-		break;
 	case 1:
-		mDoor2->SetCar(true);
+		door->SetClicked(true);
+		// Step1: Show one door which has a goat.
+		for (auto iter = mDoorList.begin(); iter != mDoorList.end(); iter++)
+		{
+			if (!(*iter)->IsClicked() && !(*iter)->IsCar()) // If the door wasn't clicked and doesn't have a car, then open this door.
+			{
+				(*iter)->getRenderer()->setTexture(mGoatDoorTexture);
+				(*iter)->setEnabled(false); // Disable the door.
+				break;
+			}
+		}
 		break;
 	case 2:
-		mDoor3->SetCar(true);
+		// Step2: Make final decision
+		if (door->IsClicked()) // Keep the choice
+		{
+			if (door->IsCar()) // If the door has a car, then you won.
+			{
+				mbWin = true;
+				mCarNumber++;
+			}
+			else
+			{
+				mGoatNumber++; // If the door has a goat, the you lost.
+			}
+		}
+		else // Change the choice
+		{
+			if (door->IsCar()) // If the door has a car, then you won.
+			{
+				mbWin = true;
+				mCarNumber++;
+			}
+			else
+			{
+				mGoatNumber++; // If the door has a goat, the you lost.
+			}
+		}
+
+		for (auto iter = mDoorList.begin(); iter != mDoorList.end(); iter++) // Open every door.
+		{
+			if ((*iter)->IsCar())
+			{
+				(*iter)->getRenderer()->setTexture(mCarDoorTexture);
+
+			}
+			else
+			{
+				(*iter)->getRenderer()->setTexture(mGoatDoorTexture);
+			}
+			(*iter)->SetOpen(true);
+			(*iter)->setEnabled(true); // Enable every door.
+		}
+		break;
+	case 3:
+		Restart();
 		break;
 	}
 }
@@ -470,309 +261,83 @@ void Game::RunSignal(tgui::ComboBox::Ptr repeat, tgui::ComboBox::Ptr choice, tgu
 		std::cout << "Do nothing\n";
 		return;
 	}
-	eDoorNumber doorNumber;
 
-	int num = std::stoi(repeat->getSelectedItem().toAnsiString());  // Convert string to int
+	int repeatNum = std::stoi(repeat->getSelectedItem().toAnsiString());  // Convert string to int
 
-	for (int i = 0; i < num; i++)
+	for (int i = 0; i < repeatNum; i++)
 	{
 		std::cout << i << std::endl;
+
 		// Step1: Choose one door randomly.
-		int random = rand() % 3;
-		switch (random)
-		{
-		case 0:
-			doorNumber = DOOR1;
-			break;
-		case 1:
-			doorNumber = DOOR2;
-			break;
-		case 2:
-			doorNumber = DOOR3;
-			break;
-		}
+		mDoorList[rand() % 3]->SetClicked(true);
+
 
 		// Step2: Show one door which has a goat.
-		switch (doorNumber)
+		for (auto iter = mDoorList.begin(); iter != mDoorList.end(); iter++)
 		{
-		case DOOR1:
-			if (mDoor2->IsCar())
+			if (!(*iter)->IsClicked() && !(*iter)->IsCar()) // If the door wasn't clicked and doesn't have a car, then open this door.
 			{
-				mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-				mDoor3->SetOpen(true);
+				(*iter)->getRenderer()->setTexture(mGoatDoorTexture);
+				(*iter)->SetOpen(true);
+				(*iter)->setEnabled(false); // Disable the door.
+				break;
 			}
-			else if (mDoor3->IsCar())
-			{
-				mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-				mDoor2->SetOpen(true);
-			}
-			else
-			{
-				mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-				mDoor2->SetOpen(true);
-			}
-			break;
-		case DOOR2:
-			if (mDoor1->IsCar())
-			{
-				mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-				mDoor3->SetOpen(true);
-			}
-			else if (mDoor3->IsCar())
-			{
-				mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-				mDoor1->SetOpen(true);
-			}
-			else
-			{
-				mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-				mDoor1->SetOpen(true);
-			}
-			break;
-		case DOOR3:
-			if (mDoor2->IsCar())
-			{
-				mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-				mDoor1->SetOpen(true);
-			}
-			else if (mDoor1->IsCar())
-			{
-				mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-				mDoor2->SetOpen(true);
-			}
-			else
-			{
-				mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-				mDoor2->SetOpen(true);
-			}
-			break;
 		}
 
 		// Step3: Make final decision depend on the choice.
-		if (choice->getSelectedItem() == "Keep the choice.")
+		switch (choice->getSelectedItemIndex())
 		{
-			switch (doorNumber)
+		case 0: // Keep the choice.
+			for (auto iter = mDoorList.begin(); iter != mDoorList.end(); iter++)
 			{
-			case DOOR1:
-				if (mDoor1->IsCar()) // You won the game in this case.
+				if ((*iter)->IsClicked())
 				{
-					mDoor1->getRenderer()->setTexture(mCarDoorTexture);
-					mDoor1->SetOpen(true);
-					mbWin = true;
-					mCarNumber++;
+					if ((*iter)->IsCar())
+					{
+						mbWin = true;
+						mCarNumber++;
+					}
+					else
+					{
+						mGoatNumber++;
+					}
+					break;
 				}
-				else  // You lost the game in this case.
-				{
-					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor1->SetOpen(true);
-					mGoatNumber++;
-				}
-
-				if (mDoor2->IsCar())
-				{
-					mDoor2->getRenderer()->setTexture(mCarDoorTexture);
-					mDoor2->SetOpen(true);
-				}
-				else
-				{
-					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor2->SetOpen(true);
-				}
-
-				if (mDoor3->IsCar())
-				{
-					mDoor3->getRenderer()->setTexture(mCarDoorTexture);
-					mDoor3->SetOpen(true);
-				}
-				else
-				{
-					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor3->SetOpen(true);
-				}
-				break;
-			case DOOR2:
-				if (mDoor1->IsCar())
-				{
-					mDoor1->getRenderer()->setTexture(mCarDoorTexture);
-					mDoor1->SetOpen(true);
-				}
-				else
-				{
-					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor1->SetOpen(true);
-				}
-
-				if (mDoor2->IsCar()) // You won the game.
-				{
-					mDoor2->getRenderer()->setTexture(mCarDoorTexture);
-					mDoor2->SetOpen(true);
-					mbWin = true;
-					mCarNumber++;
-				}
-				else  // You lost the game in this case.
-				{
-					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor2->SetOpen(true);
-					mGoatNumber++;
-				}
-
-				if (mDoor3->IsCar())
-				{
-					mDoor3->getRenderer()->setTexture(mCarDoorTexture);
-					mDoor3->SetOpen(true);
-				}
-				else
-				{
-					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor3->SetOpen(true);
-				}
-				break;
-			case DOOR3:
-				if (mDoor1->IsCar())
-				{
-					mDoor1->getRenderer()->setTexture(mCarDoorTexture);
-					mDoor1->SetOpen(true);
-				}
-				else
-				{
-					mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor1->SetOpen(true);
-				}
-
-				if (mDoor2->IsCar())
-				{
-					mDoor2->getRenderer()->setTexture(mCarDoorTexture);
-					mDoor2->SetOpen(true);
-				}
-				else
-				{
-					mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-					mDoor2->SetOpen(true);
-				}
-
-				if (mDoor3->IsCar()) // You won the game.
-				{
-					mDoor3->getRenderer()->setTexture(mCarDoorTexture);
-					mDoor3->SetOpen(true);
-					mbWin = true;
-					mCarNumber++;
-				}
-				else // You lost the game in this case.
-				{
-					mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-					mGoatNumber++;
-					mDoor3->SetOpen(true);
-				}
-				break;
 			}
+			break;
+		case 1: // Change the choice.
+			for (auto iter = mDoorList.begin(); iter != mDoorList.end(); iter++)
+			{
+				if (!(*iter)->IsOpened() && !(*iter)->IsClicked())
+				{
+					if ((*iter)->IsCar())
+					{
+						mbWin = true;
+						mCarNumber++;
+					}
+					else
+					{
+						mGoatNumber++;
+					}
+					break;
+				}
+			}
+			break;
 		}
-		else if (choice->getSelectedItem() == "Change the choice.")
+
+		for (auto iter = mDoorList.begin(); iter != mDoorList.end(); iter++) // Open every door.
 		{
-			switch (doorNumber)
+			if ((*iter)->IsCar())
 			{
-			case DOOR1:
-				if (mDoor2->IsOpened()) // If door2 is already opened, then open door3.
-				{
-					if (mDoor3->IsCar())
-					{
-						mDoor3->getRenderer()->setTexture(mCarDoorTexture);
-						mDoor3->SetOpen(true);
-						mbWin = true;
-						mCarNumber++;
-					}
-					else
-					{
-						mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-						mDoor3->SetOpen(true);
-						mGoatNumber++;
-					}
-				}
-				else if (mDoor3->IsOpened()) // If door3 is already opened, then open door2.
-				{
-					if (mDoor2->IsCar())
-					{
-						mDoor2->getRenderer()->setTexture(mCarDoorTexture);
-						mDoor2->SetOpen(true);
-						mbWin = true;
-						mCarNumber++;
-					}
-					else
-					{
-						mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-						mDoor2->SetOpen(true);
-						mGoatNumber++;
-					}
-				}
-				break;
-			case DOOR2:
-				if (mDoor1->IsOpened()) // If door1 is already opened, then open door3.
-				{
-					if (mDoor3->IsCar())
-					{
-						mDoor3->getRenderer()->setTexture(mCarDoorTexture);
-						mDoor3->SetOpen(true);
-						mbWin = true;
-						mCarNumber++;
-					}
-					else
-					{
-						mDoor3->getRenderer()->setTexture(mGoatDoorTexture);
-						mDoor3->SetOpen(true);
-						mGoatNumber++;
-					}
-				}
-				else if (mDoor3->IsOpened()) // If door3 is already opened, then open door1.
-				{
-					if (mDoor1->IsCar())
-					{
-						mDoor1->getRenderer()->setTexture(mCarDoorTexture);
-						mDoor1->SetOpen(true);
-						mbWin = true;
-						mCarNumber++;
-					}
-					else
-					{
-						mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-						mDoor1->SetOpen(true);
-						mGoatNumber++;
-					}
-				}
-				break;
-			case DOOR3:
-				if (mDoor2->IsOpened()) // If door2 is already opened, then open door1.
-				{
-					if (mDoor1->IsCar())
-					{
-						mDoor1->getRenderer()->setTexture(mCarDoorTexture);
-						mDoor1->SetOpen(true);
-						mbWin = true;
-						mCarNumber++;
-					}
-					else
-					{
-						mDoor1->getRenderer()->setTexture(mGoatDoorTexture);
-						mDoor1->SetOpen(true);
-						mGoatNumber++;
-					}
-				}
-				else if (mDoor1->IsOpened()) // If door1 is already opened, then open door2.
-				{
-					if (mDoor2->IsCar())
-					{
-						mDoor2->getRenderer()->setTexture(mCarDoorTexture);
-						mbWin = true;
-						mCarNumber++;
-						mDoor2->SetOpen(true);
-					}
-					else
-					{
-						mDoor2->getRenderer()->setTexture(mGoatDoorTexture);
-						mGoatNumber++;
-						mDoor2->SetOpen(true);
-					}
-				}
-				break;
+				(*iter)->getRenderer()->setTexture(mCarDoorTexture);
+
 			}
+			else
+			{
+				(*iter)->getRenderer()->setTexture(mGoatDoorTexture);
+			}
+			(*iter)->SetOpen(true);
+			(*iter)->setEnabled(true); // Enable every door.
 		}
 
 		if (mbWin)
