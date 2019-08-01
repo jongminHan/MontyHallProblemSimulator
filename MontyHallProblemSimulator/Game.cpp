@@ -20,25 +20,40 @@ bool Game::Init()
 	mWindow.create(sf::VideoMode(WIDTH, HEIGHT), "Monty Hall Problem Simulator");
 	mGui = std::make_shared<tgui::Gui>(mWindow); // Create the gui and attach it to the window
 
-	if (!mClosedDoorTexture.loadFromFile("C:\\Users\\Jongmin\\Documents\\MontyHallProblemSimulator\\MontyHallProblemSimulator\\closedDoor.png"))
+	if (!mClosedDoorTexture.loadFromFile("resources/closedDoor.png"))
 	{
 		std::cout << "Cannot load image\n";
 		return false;
 	}
 
-	if (!mGoatDoorTexture.loadFromFile("C:\\Users\\Jongmin\\Documents\\MontyHallProblemSimulator\\MontyHallProblemSimulator\\goatDoor.png"))
+	if (!mGoatDoorTexture.loadFromFile("resources/goatDoor.png"))
 	{
 		std::cout << "Cannot load image\n";
 		return false;
 	}
 
-	if (!mCarDoorTexture.loadFromFile("C:\\Users\\Jongmin\\Documents\\MontyHallProblemSimulator\\MontyHallProblemSimulator\\carDoor.png"))
+	if (!mCarDoorTexture.loadFromFile("resources/carDoor.png"))
 	{
 		std::cout << "Cannot load image\n";
 		return false;
 	}
 
-	mDoorList.push_back(std::make_shared<Door>(mClosedDoorTexture));
+	// Load the text font
+	if (!mFont.loadFromFile("resources/sansation.ttf"))
+	{
+		std::cout << "Cannot load font\n";
+		return false;
+	}
+
+	// Initialize the start message
+	mStartMessage.setFont(mFont);
+	mStartMessage.setCharacterSize(40);
+	mStartMessage.setPosition(170.f, 150.f);
+	mStartMessage.setFillColor(sf::Color::White);
+	mStartMessage.setString("This is Monty Hall Problem simulator.(Press any key to continue.)");
+
+	// Initialize three doors
+	mDoorList.push_back(std::make_shared<Door>(mClosedDoorTexture)); 
 	mDoorList.push_back(std::make_shared<Door>(mClosedDoorTexture));
 	mDoorList.push_back(std::make_shared<Door>(mClosedDoorTexture));
 
@@ -50,6 +65,7 @@ bool Game::Init()
 	std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
 	mDoorList[rand() % 3]->SetCar(true); // True for car. False for goat.
+
 	return true;
 }
 

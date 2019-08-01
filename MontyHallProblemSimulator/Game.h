@@ -15,6 +15,8 @@ public:
 private:
 	const int WIDTH = 1280;
 	const int HEIGHT = 720;
+	sf::Font mFont;
+	sf::Text mStartMessage;
 	std::shared_ptr<tgui::Gui> mGui;
 	sf::RenderWindow mWindow;
 	sf::Texture mClosedDoorTexture;
