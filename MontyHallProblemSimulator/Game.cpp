@@ -7,6 +7,7 @@ Game::Game()
 	, mCarNumber(0)
 	, mGoatNumber(0)
 	, mbWin(false)
+	, mbIsPlaying(false)
 {
 	mDoorList.reserve(3);
 }
@@ -49,8 +50,8 @@ bool Game::Init()
 	mStartMessage.setFont(mFont);
 	mStartMessage.setCharacterSize(40);
 	mStartMessage.setPosition(170.f, 150.f);
-	mStartMessage.setFillColor(sf::Color::White);
-	mStartMessage.setString("This is Monty Hall Problem simulator.(Press any key to continue.)");
+	mStartMessage.setFillColor(sf::Color::Black);
+	mStartMessage.setString("This is Monty Hall Problem simulator.\n(Press any key to continue.)");
 
 	// Initialize three doors
 	mDoorList.push_back(std::make_shared<Door>(mClosedDoorTexture)); 
@@ -148,6 +149,7 @@ void Game::Run()
 
 	runButton->connect("Clicked", &Game::RunSignal, this, repeatNumBox, choiceBox, winMessage, carLabel, goatLabel);
 
+	int keyPressCounter = 0;
 	while (mWindow.isOpen())
 	{
 		sf::Event event;
@@ -156,6 +158,36 @@ void Game::Run()
 			if (event.type == sf::Event::Closed)
 			{
 				mWindow.close();
+			}
+
+			// Space key pressed: play
+			if (event.type == sf::Event::KeyPressed)
+			{
+				std::cout << keyPressCounter++ << std::endl;
+				switch (keyPressCounter)
+				{
+				case 1:
+					mStartMessage.setString("You are invited to a famous TV show, \nhosted by Monty Hall.\n(Press any key to continue.)");
+					break;
+				case 2:
+					mStartMessage.setString("You are going to play a game on TV show.\nThere are three doors.\n(Press any key to continue.)");
+					break;
+				case 3:
+					mStartMessage.setString("One door has Lamborghini behind it.\nThe other two doors has goats.\n(Press any key to continue.)");
+					break;
+				case 4:
+					mStartMessage.setString("You will get Lamborghini if you choose a door\nwhich has Lamborghini.\nYou will get a goat if you choose a door\nwhich has a goat.\n(Press any key to continue.)");
+					break;
+				case 5:
+					mStartMessage.setString("If you choose one door, the host will open\none of two doors which has a goat.\nYou can either change your choice, or keep your choice.\nIt's up to you.\n(Press any key to continue.)");
+					break;
+				case 6:
+					mStartMessage.setString("Then, let's play the game!\n(Press any key to continue.)");
+					break;
+				default:
+					mbIsPlaying = true;
+					break;
+				}
 			}
 
 			mGui->handleEvent(event); // Pass the event to the widgets
@@ -181,7 +213,14 @@ void Game::Run()
 		}
 
 		mWindow.clear(sf::Color::White);
-		mGui->draw(); // Draw all widgets
+		if (mbIsPlaying)
+		{
+			mGui->draw(); // Draw all widgets
+		}
+		else
+		{
+			mWindow.draw(mStartMessage);
+		}
 		mWindow.display();
 	}
 }
@@ -224,29 +263,14 @@ void Game::SignalHandler(std::shared_ptr<Door> door)
 		break;
 	case 2:
 		// Step2: Make final decision
-		if (door->IsClicked()) // Keep the choice
+		if (door->IsCar()) // If the door has a car, then you won.
 		{
-			if (door->IsCar()) // If the door has a car, then you won.
-			{
-				mbWin = true;
-				mCarNumber++;
-			}
-			else
-			{
-				mGoatNumber++; // If the door has a goat, the you lost.
-			}
+			mbWin = true;
+			mCarNumber++;
 		}
-		else // Change the choice
+		else  // If the door has a goat, the you lost.
 		{
-			if (door->IsCar()) // If the door has a car, then you won.
-			{
-				mbWin = true;
-				mCarNumber++;
-			}
-			else
-			{
-				mGoatNumber++; // If the door has a goat, the you lost.
-			}
+			mGoatNumber++; 
 		}
 
 		for (auto iter = mDoorList.begin(); iter != mDoorList.end(); iter++) // Open every door.

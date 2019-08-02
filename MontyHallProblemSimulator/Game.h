@@ -27,4 +27,5 @@ private:
 	int mCarNumber;
 	int mGoatNumber;
 	bool mbWin;
+	bool mbIsPlaying;
 };
