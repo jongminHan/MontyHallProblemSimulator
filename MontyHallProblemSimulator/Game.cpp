@@ -187,6 +187,7 @@ void Game::Run()
 				default:
 					mbIsPlaying = true;
 					break;
+
 				}
 			}
 
