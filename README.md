@@ -5,6 +5,8 @@
 
 SFML과 SFML에 기반한 TGUI를 이용해 작성했습니다.
 
+Visual Studio 2017 환경에서 개발했습니다.
+
 몬티 홀 문제에 관한 한국어 위키백과 링크: https://ko.wikipedia.org/wiki/%EB%AA%AC%ED%8B%B0_%ED%99%80_%EB%AC%B8%EC%A0%9C
 
 
