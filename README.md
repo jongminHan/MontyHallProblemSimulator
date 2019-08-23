@@ -1,4 +1,7 @@
 # MontyHallProblemSimulator
+
+![alt text](https://github.com/jongminHan/Portfolio/blob/master/%EB%AA%AC%ED%8B%B0%ED%99%80%EB%AC%B8%EC%A0%9C/MontyHallProblemSimulator_image.PNG)
+
 포트폴리오를 위해 작성한 프로그램.
 
 '몬티 홀 문제'를 시뮬레이션 해주는 프로그램 입니다.
